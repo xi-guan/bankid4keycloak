@@ -1,9 +1,6 @@
 package org.keycloak.broker.bankid.client;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.client.HttpClient;
 import org.jboss.logging.Logger;
 import org.keycloak.broker.bankid.model.AuthResponse;
@@ -12,14 +9,16 @@ import org.keycloak.broker.bankid.model.CollectResponse;
 import org.keycloak.broker.provider.util.SimpleHttp;
 import org.keycloak.broker.provider.util.SimpleHttp.Response;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SimpleBankidClient {
 	
 	private static final Logger logger = Logger.getLogger(SimpleBankidClient.class);
 
-	private HttpClient bankidHttpClient;
-	private String baseUrl;
+	private final HttpClient bankidHttpClient;
+	private final String baseUrl;
 	
 	public SimpleBankidClient(HttpClient bankidHttpClient, String baseUrl) {
 		this.bankidHttpClient = bankidHttpClient;
@@ -45,9 +44,9 @@ public class SimpleBankidClient {
 		}
 	}
 	
-	public CollectResponse sendCollect(String orderrRef) {
+	public CollectResponse sendCollect(String orderRef) {
 		Map<String, String> requestData = new HashMap<>();
-		requestData.put("orderRef", orderrRef);
+		requestData.put("orderRef", orderRef);
 		try {
 			Response response = sendRequest("/rp/v5/collect", requestData);
 			CollectResponse responseData  = response.asJson(CollectResponse.class);
@@ -64,7 +63,6 @@ public class SimpleBankidClient {
 		requestData.put("orderRef", orderrRef);
 		try {
 			sendRequest("/rp/v5/cancel", requestData);
-			return;
 		} catch (Exception e) {
 			logger.warn("Failed cancel BankID auth request " + orderrRef, e);
 		}
@@ -90,17 +88,17 @@ public class SimpleBankidClient {
 					return handleOtherHttpErrors(path, response);
 			}
 		} catch (IOException e) {
-			logger.error("Failed to send request to BankID", e);
+			logger.info("Failed to send request to BankID");
 			throw new BankidClientException(BankidHintCodes.internal, e);
 		}
 	}
 
 	private Response handleOtherHttpErrors(String path, Response response) {
 		try {
-			logger.errorf("Request to %s failed with status code %d and payload %s", 
+			logger.info(String.format("Request to %s failed with status code %d and payload %s",
 					path,
 					response.getStatus(),
-					response.asString());
+					response.asString()));
 		} catch (IOException e) { }
 		throw new  BankidClientException(BankidHintCodes.internal);
 	}
@@ -118,10 +116,10 @@ public class SimpleBankidClient {
 	private Response handle400Response(String path, Response response) {
 		try {
 			JsonNode responseJson = response.asJson();
-			logger.errorf("Request to %s failed with status code %d and payload %s", 
+			logger.info(String.format("Request to %s failed with status code %d and payload %s",
 					path,
 					response.getStatus(),
-					responseJson.toString());
+					responseJson.toString()));
 			throw new  BankidClientException(BankidHintCodes.valueOf(responseJson.get("errorCode").textValue()));
 		} catch (IOException e) { 
 			throw new  BankidClientException(BankidHintCodes.internal);

@@ -1,14 +1,15 @@
 package org.keycloak.broker.bankid;
 
-import java.security.KeyStore;
-
 import org.keycloak.common.util.KeystoreUtil;
 import org.keycloak.models.IdentityProviderModel;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyStore;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
 public class BankidIdentityProviderConfig extends IdentityProviderModel {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3849007589404817838L;
 	
 	private static final String BANKID_APIURL_PROPERTY_NAME = "bankid_apiurl";
@@ -38,18 +39,22 @@ public class BankidIdentityProviderConfig extends IdentityProviderModel {
 	public KeyStore getKeyStore() throws Exception {
 		if ( keyStore == null ) {
 			keyStore = KeystoreUtil.loadKeyStore(
-				getConfig().get(BANKID_KEYSTORE_FILE_PROPERTY_NAME), 
+				getConfig().get(BANKID_KEYSTORE_FILE_PROPERTY_NAME),
 				getConfig().getOrDefault(BANKID_KEYSTORE_PASSWORD_PROPERTY_NAME, "changeit"));
 		}
 		return keyStore;
 	}
 	public KeyStore getTrustStore() throws Exception {
-		if ( truststore == null ) {
-			truststore = KeystoreUtil.loadKeyStore(
-				getConfig().get(BANKID_TRUSTSTORE_FILE_PROPERTY_NAME), 
-				getConfig().getOrDefault(BANKID_TRUSTSTORE_PASSWORD_PROPERTY_NAME, "changeit"));
-		}
-		return truststore;
+    if (truststore == null) {
+      var certFactory = CertificateFactory.getInstance("X.509");
+      var certPath = getConfig().get(BANKID_TRUSTSTORE_FILE_PROPERTY_NAME);
+      var certCA = (X509Certificate) certFactory.generateCertificate(Files.newInputStream(Paths.get(certPath)));
+      var keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+      keyStore.load(null);
+      keyStore.setCertificateEntry("caCert", certCA);
+      return keyStore;
+    }
+    return truststore;
 	}
 	
 	public String getPrivateKeyPassword() {
@@ -57,14 +62,14 @@ public class BankidIdentityProviderConfig extends IdentityProviderModel {
 	}
 	
 	public boolean isShowQRCode() {
-		return new Boolean(getConfig().getOrDefault(BANKID_SHOW_QR_CODE, "false"));
+		return Boolean.parseBoolean(getConfig().getOrDefault(BANKID_SHOW_QR_CODE, "false"));
 	}
 	
 	public boolean isRequiredNin() {
-		return new Boolean(getConfig().getOrDefault(BANKID_REQUIRE_NIN, "false"));
+		return Boolean.parseBoolean(getConfig().getOrDefault(BANKID_REQUIRE_NIN, "false"));
 	}
 	
 	public boolean isSaveNinHashed() {
-		return new Boolean(getConfig().getOrDefault(BANKID_SAVE_NIN_HASH, "false"));
+		return Boolean.parseBoolean(getConfig().getOrDefault(BANKID_SAVE_NIN_HASH, "false"));
 	}
 }

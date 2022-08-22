@@ -47,8 +47,6 @@ Start Keycloak and log in to the admin console.
 
 Under the "Identity Providers" heading add the "BankID e-legitimation" identity provider.
 
-<picture>
-
 **BankID API base URL:**
 The URL for the BankID api. Please refer to the [BankID Relying Party Guidelines](https://www.bankid.com/bankid-i-dina-tjanster/rp-info) in case the URL has changed. 
 At the time of writing they are 
