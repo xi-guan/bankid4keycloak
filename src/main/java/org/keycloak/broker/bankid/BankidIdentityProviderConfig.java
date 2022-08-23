@@ -7,10 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BankidIdentityProviderConfig extends IdentityProviderModel {
-	private static final long serialVersionUID = 3849007589404817838L;
+  private static final long serialVersionUID = 3849007589404817838L;
 	
 	private static final String BANKID_APIURL_PROPERTY_NAME = "bankid_apiurl";
 	private static final String BANKID_KEYSTORE_FILE_PROPERTY_NAME = "bankid_keystore_file";
@@ -21,44 +21,54 @@ public class BankidIdentityProviderConfig extends IdentityProviderModel {
 	private static final String BANKID_REQUIRE_NIN = "bankid_require_nin";
 	private static final String BANKID_SHOW_QR_CODE = "bankid_show_qr_code";
 	private static final String BANKID_SAVE_NIN_HASH = "bankid_save_nin_hash";
-	
-	private KeyStore keyStore;
-	private KeyStore truststore;
-	
-	public BankidIdentityProviderConfig() {
-		super();
-	}
-	
-	public BankidIdentityProviderConfig(IdentityProviderModel model) {
-		super(model);
-	}
-
-	public String getApiUrl() {
-		return getConfig().get(BANKID_APIURL_PROPERTY_NAME);
-	}
-	public KeyStore getKeyStore() throws Exception {
-		if ( keyStore == null ) {
-			keyStore = KeystoreUtil.loadKeyStore(
-				getConfig().get(BANKID_KEYSTORE_FILE_PROPERTY_NAME),
-				getConfig().getOrDefault(BANKID_KEYSTORE_PASSWORD_PROPERTY_NAME, "changeit"));
-		}
-		return keyStore;
-	}
-	public KeyStore getTrustStore() throws Exception {
+  private static final String DEFAULT_PASSWORD = "changeit";
+  
+  private final AtomicReference<KeyStore> keyStoreRef = new AtomicReference<>();
+	private final AtomicReference<KeyStore> truststoreRef = new AtomicReference<>();
+  
+  public BankidIdentityProviderConfig() {super();}
+  
+  public BankidIdentityProviderConfig(IdentityProviderModel model) {super(model);}
+  
+  public String getApiUrl() {return getConfig().get(BANKID_APIURL_PROPERTY_NAME);}
+  
+  public KeyStore getKeyStore() throws Exception {
+    var keystore = keyStoreRef.get();
+    if (keystore == null) {
+      keystore = KeystoreUtil.loadKeyStore(getKeystoreFilePath(), getKeyStorePassword());
+      if (!keyStoreRef.compareAndSet(null, keystore)) {
+        return keyStoreRef.get();
+      }
+    }
+    return keystore;
+  }
+  
+  public KeyStore getTrustStore() throws Exception {
+    var truststore = truststoreRef.get();
     if (truststore == null) {
       var certFactory = CertificateFactory.getInstance("X.509");
-      var certPath = getConfig().get(BANKID_TRUSTSTORE_FILE_PROPERTY_NAME);
-      var certCA = (X509Certificate) certFactory.generateCertificate(Files.newInputStream(Paths.get(certPath)));
-      var keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-      keyStore.load(null);
-      keyStore.setCertificateEntry("caCert", certCA);
-      return keyStore;
+      var certPath = getTruststoreFilePath();
+      var certCA = certFactory.generateCertificate(Files.newInputStream(Paths.get(certPath)));
+      truststore = KeyStore.getInstance(KeyStore.getDefaultType());
+      truststore.load(null);
+      truststore.setCertificateEntry("caCert", certCA);
+      if (!truststoreRef.compareAndSet(null, truststore)) {
+        return truststoreRef.get();
+      }
     }
     return truststore;
-	}
-	
-	public String getPrivateKeyPassword() {
-		return getConfig().getOrDefault(BANKID_PRIVATEKEY_PASSWORD_PROPERTY_NAME, "changeit");
+  }
+  
+  private String getKeyStorePassword() {return getConfig().getOrDefault(BANKID_KEYSTORE_PASSWORD_PROPERTY_NAME, DEFAULT_PASSWORD);}
+  
+  private String getKeystoreFilePath() {return getConfig().get(BANKID_KEYSTORE_FILE_PROPERTY_NAME);}
+  
+  private String getTruststoreFilePath() {
+    return getConfig().get(BANKID_TRUSTSTORE_FILE_PROPERTY_NAME);
+  }
+  
+  public String getPrivateKeyPassword() {
+		return getConfig().getOrDefault(BANKID_PRIVATEKEY_PASSWORD_PROPERTY_NAME, DEFAULT_PASSWORD);
 	}
 	
 	public boolean isShowQRCode() {

@@ -27,8 +27,8 @@ public enum BankidHintCodes {
 	internal("RFA22");
 
 	public final String messageShortName;
-	 
-    private BankidHintCodes(String messageShortName) {
-        this.messageShortName = messageShortName;
-    }
+  
+  BankidHintCodes(String messageShortName) {
+    this.messageShortName = messageShortName;
+  }
 }

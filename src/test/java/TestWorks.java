@@ -1,6 +1,5 @@
 import org.apache.http.client.HttpClient;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.keycloak.broker.bankid.BankidIdentityProviderConfig;
 import org.keycloak.broker.bankid.client.SimpleBankidClient;
 import org.keycloak.broker.bankid.model.AuthResponse;
 import org.keycloak.common.util.KeystoreUtil;
@@ -19,7 +18,6 @@ import java.security.cert.X509Certificate;
 
 public class TestWorks {
   public static void main(String[] args) throws Exception {
-    BankidIdentityProviderConfig bankidIdentityProviderConfig = new BankidIdentityProviderConfig();
     KeyStore keyStore = getKeyStore();
     KeyStore trustStore = getTrustStore();
     String password = "qwerty123";

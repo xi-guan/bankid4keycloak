@@ -42,45 +42,40 @@
 				</div>
 			</div>
 			<form novalidate="" action="cancel">
-			<button
-				style="padding: 0px; margin: 0px; background-color: rgba(255, 255, 255, 0); border: medium none; cursor: pointer; outline: currentcolor none medium;">
-				<div
-					style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: row; flex-shrink: 0; border-style: solid; border-width: 1px; position: relative; z-index: 0; min-height: 0px; min-width: 0px; background-color: rgb(255, 255, 255); border-color: rgb(255, 255, 255); border-radius: 0px; height: 50px; justify-content: center; padding: 19px 24px; transition: background-color 0.2s ease 0s, border-color 0.2s ease 0s, color 0.2s ease 0s;">
-					<div
-						style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: column; flex-shrink: 0; border-style: solid; border-width: 2px; position: absolute; z-index: 1; min-height: 0px; min-width: 0px; border-radius: 0px; bottom: -5px; left: -5px; right: -5px; top: -5px; transition: border-color 0.2s ease 0s; border-color: rgba(255, 255, 255, 0);"></div>
-					<div
-						style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: column; flex-shrink: 0; border-style: solid; border-width: 0px; position: relative; z-index: 0; min-height: 0px; min-width: 0px; padding-top: 0px; margin-top: -5px; margin-bottom: -6px;">
-						<span
-							style="max-width: 100%; color: rgb(23, 23, 23); font-family: Helvetica , Arial, sans-serif; font-weight: 500; font-size: 16px; opacity: 1; line-height: 20px; transition: color 0.2s ease 0s; visibility: visible; text-rendering: geometricprecision; -moz-text-size-adjust: none;">${msg("bankid.login.cancel")}</span>
+			<button style="padding: 0px; margin: 0px; background-color: rgba(255, 255, 255, 0); border: medium none; cursor: pointer; outline: currentcolor none medium;">
+				<div style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: row; flex-shrink: 0; border-style: solid; border-width: 1px; position: relative; z-index: 0; min-height: 0px; min-width: 0px; background-color: rgb(255, 255, 255); border-color: rgb(255, 255, 255); border-radius: 0px; height: 50px; justify-content: center; padding: 19px 24px; transition: background-color 0.2s ease 0s, border-color 0.2s ease 0s, color 0.2s ease 0s;">
+					<div style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: column; flex-shrink: 0; border-style: solid; border-width: 2px; position: absolute; z-index: 1; min-height: 0px; min-width: 0px; border-radius: 0px; bottom: -5px; left: -5px; right: -5px; top: -5px; transition: border-color 0.2s ease 0s; border-color: rgba(255, 255, 255, 0);"></div>
+					<div style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: column; flex-shrink: 0; border-style: solid; border-width: 0px; position: relative; z-index: 0; min-height: 0px; min-width: 0px; padding-top: 0px; margin-top: -5px; margin-bottom: -6px;">
+						<span style="max-width: 100%; color: rgb(23, 23, 23); font-family: Helvetica , Arial, sans-serif; font-weight: 500; font-size: 16px; opacity: 1; line-height: 20px; transition: color 0.2s ease 0s; visibility: visible; text-rendering: geometricprecision; -moz-text-size-adjust: none;">${msg("bankid.login.cancel")}</span>
 					</div>
 				</div>
 			</button> 
 			</form>
 		</div>
 <script>
-	var count = 10;
-    var opts = {
-      lines: 16, // The number of lines to draw
-      length: 26, // The length of each line
-      width: 13, // The line thickness
-      radius: 35, // The radius of the inner circle
-      scale: 0.85, // Scales overall size of the spinner
-      corners: 1, // Corner roundness (0..1)
-      color: '#848080', // CSS color or array of colors
-      fadeColor: 'transparent', // CSS color or array of colors
-      speed: 0.5, // Rounds per second
-      rotate: 0, // The rotation offset
-      animation: 'spinner-line-shrink', // The CSS animation name for the lines
-      direction: 1, // 1: clockwise, -1: counterclockwise
-      zIndex: 2e9, // The z-index (defaults to 2000000000)
-      className: 'mySpinner', // The CSS class to assign to the spinner
-      top: '51%', // Top position relative to parent
-      left: '50%', // Left position relative to parent
-      shadow: '0 0 1px transparent', // Box-shadow for the lines
-      position: 'absolute' // Element positioning
-    };
+  const count = 10;
+  const opts = {
+    lines: 16, // The number of lines to draw
+    length: 26, // The length of each line
+    width: 13, // The line thickness
+    radius: 35, // The radius of the inner circle
+    scale: 0.85, // Scales overall size of the spinner
+    corners: 1, // Corner roundness (0..1)
+    color: '#848080', // CSS color or array of colors
+    fadeColor: 'transparent', // CSS color or array of colors
+    speed: 0.5, // Rounds per second
+    rotate: 0, // The rotation offset
+    animation: 'spinner-line-shrink', // The CSS animation name for the lines
+    direction: 1, // 1: clockwise, -1: counterclockwise
+    zIndex: 2e9, // The z-index (defaults to 2000000000)
+    className: 'mySpinner', // The CSS class to assign to the spinner
+    top: '51%', // Top position relative to parent
+    left: '50%', // Left position relative to parent
+    shadow: '0 0 1px transparent', // Box-shadow for the lines
+    position: 'absolute', // Element positioning
+  };
 
-	poll(
+  poll(
 	    function() {
 	    
 	    	const req = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
@@ -88,12 +83,12 @@
 	    	req.open("GET", url, false);
 	    	req.send();
 	    	
-	    	if(req.status==200) {
+	    	if(req.status===200) {
 	    	    var response = JSON.parse(req.responseText);
-	    	    if ( response.status == 'complete' ) {
+	    	    if ( response.status === 'complete' ) {
     				return true;
-				} else if ( response.status == 'pending' 
-					&& (response.hintCode == 'started' || response.hintCode == 'userSign')  ) {
+				} else if ( response.status === 'pending'
+					&& (response.hintCode === 'started' || response.hintCode === 'userSign')  ) {
 					let qrcode = document.getElementById('qrcode');
 					if ( qrcode !== null ) {
 					  qrcode.style.display = 'none';
@@ -106,7 +101,7 @@
 					}
 				}	
     		}
-    		else if( req.status!=200 ) {
+    		else if( req.status!==200 ) {
     			redirectToError(JSON.parse(req.responseText).hintCode);	
     		}
 	        return false;
