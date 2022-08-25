@@ -13,9 +13,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleBankidClient {
-  private static final Logger logger = Logger.getLogger(SimpleBankidClient.class);
-  public static final String PERSONAL_NUMBER = "personalNumber";
+public class BankidClient {
+  private static final Logger logger = Logger.getLogger(BankidClient.class);
+  
+  public static final String PERSONAL_NO = "personalNumber";
   public static final String END_USER_IP = "endUserIp";
   public static final String ORDER_REF = "orderRef";
   
@@ -26,7 +27,7 @@ public class SimpleBankidClient {
   private final HttpClient httpClient;
 	private final String baseUrl;
 	
-	public SimpleBankidClient(HttpClient httpClient, String baseUrl) {
+	public BankidClient(HttpClient httpClient, String baseUrl) {
 		this.httpClient = httpClient;
 		this.baseUrl = baseUrl;
 	}
@@ -34,7 +35,7 @@ public class SimpleBankidClient {
 	public AuthResponse sendAuth(String personalNumber, String endUserIp) {
 		Map<String, String> requestData = new HashMap<>();
 		if ( personalNumber != null ) {
-			requestData.put(PERSONAL_NUMBER, personalNumber);
+			requestData.put(PERSONAL_NO, personalNumber);
 		}
 		requestData.put(END_USER_IP, endUserIp);
 		Response response = sendRequest(API_AUTH, requestData);

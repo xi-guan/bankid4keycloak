@@ -1,5 +1,5 @@
 import org.apache.http.client.HttpClient;
-import org.keycloak.broker.bankid.client.SimpleBankidClient;
+import org.keycloak.broker.bankid.client.BankidClient;
 import org.keycloak.broker.bankid.model.AuthResponse;
 import org.keycloak.common.util.KeystoreUtil;
 import org.keycloak.connections.httpclient.HttpClientBuilder;
@@ -16,7 +16,7 @@ public class Test {
     var trustStore = getTrustStore();
     String password = "qwerty123";
     HttpClient httpclient = buildBankidHttpClient(keyStore, password, trustStore);
-    SimpleBankidClient bankidClient = new SimpleBankidClient(httpclient, "https://appapi2.test.bankid.com");
+    BankidClient bankidClient = new BankidClient(httpclient, "https://appapi2.test.bankid.com");
     AuthResponse authResponse = bankidClient.sendAuth("199712152397", "178.222.224.50");
     System.out.printf("Auth response: [%s, %s]%n", authResponse.getOrderRef(),
       authResponse.getAutoStartToken());

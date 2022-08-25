@@ -21,12 +21,12 @@ function poll(fn, callback, errback, timeout, interval) {
   })();
 }
 
-function redirectToDone() {
-	window.location.href = "done";
+function redirectToDone(state) {
+  window.location.href = `done?state=${state}`;
 }
 
-function redirectToError(errorCode) {
-	window.location.href = "error?code=" + errorCode;
+function redirectToError(errorCode, state) {
+  window.location.href = `error?code=${errorCode}&state=${state}`;
 }
 
 function redirectToCancel(errorCode) {

@@ -30,7 +30,7 @@
 				<#if showqr == true>
 				<div id="qrcode" style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: column; flex-shrink: 0; border-style: solid; border-width: 0px; position: relative; z-index: 0; min-height: 0px; min-width: 0px; margin-bottom: 40px; width: 100%;">
 					<div style="flex: 1 1 0%; text-align: center;">
-						<img src="qrcode"/>
+						<img src="qrcode?state=${state}"/>
 					</div>
 				</div>
 				</#if>
@@ -42,14 +42,15 @@
 				</div>
 			</div>
 			<form novalidate="" action="cancel">
-			<button style="padding: 0px; margin: 0px; background-color: rgba(255, 255, 255, 0); border: medium none; cursor: pointer; outline: currentcolor none medium;">
-				<div style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: row; flex-shrink: 0; border-style: solid; border-width: 1px; position: relative; z-index: 0; min-height: 0px; min-width: 0px; background-color: rgb(255, 255, 255); border-color: rgb(255, 255, 255); border-radius: 0px; height: 50px; justify-content: center; padding: 19px 24px; transition: background-color 0.2s ease 0s, border-color 0.2s ease 0s, color 0.2s ease 0s;">
-					<div style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: column; flex-shrink: 0; border-style: solid; border-width: 2px; position: absolute; z-index: 1; min-height: 0px; min-width: 0px; border-radius: 0px; bottom: -5px; left: -5px; right: -5px; top: -5px; transition: border-color 0.2s ease 0s; border-color: rgba(255, 255, 255, 0);"></div>
-					<div style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: column; flex-shrink: 0; border-style: solid; border-width: 0px; position: relative; z-index: 0; min-height: 0px; min-width: 0px; padding-top: 0px; margin-top: -5px; margin-bottom: -6px;">
-						<span style="max-width: 100%; color: rgb(23, 23, 23); font-family: Helvetica , Arial, sans-serif; font-weight: 500; font-size: 16px; opacity: 1; line-height: 20px; transition: color 0.2s ease 0s; visibility: visible; text-rendering: geometricprecision; -moz-text-size-adjust: none;">${msg("bankid.login.cancel")}</span>
-					</div>
-				</div>
-			</button> 
+        <button style="padding: 0px; margin: 0px; background-color: rgba(255, 255, 255, 0); border: medium none; cursor: pointer; outline: currentcolor none medium;">
+          <div style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: row; flex-shrink: 0; border-style: solid; border-width: 1px; position: relative; z-index: 0; min-height: 0px; min-width: 0px; background-color: rgb(255, 255, 255); border-color: rgb(255, 255, 255); border-radius: 0px; height: 50px; justify-content: center; padding: 19px 24px; transition: background-color 0.2s ease 0s, border-color 0.2s ease 0s, color 0.2s ease 0s;">
+            <div style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: column; flex-shrink: 0; border-style: solid; border-width: 2px; position: absolute; z-index: 1; min-height: 0px; min-width: 0px; border-radius: 0px; bottom: -5px; left: -5px; right: -5px; top: -5px; transition: border-color 0.2s ease 0s; border-color: rgba(255, 255, 255, 0);"></div>
+            <div style="box-sizing: border-box; display: flex; align-items: stretch; flex-direction: column; flex-shrink: 0; border-style: solid; border-width: 0px; position: relative; z-index: 0; min-height: 0px; min-width: 0px; padding-top: 0px; margin-top: -5px; margin-bottom: -6px;">
+              <span style="max-width: 100%; color: rgb(23, 23, 23); font-family: Helvetica , Arial, sans-serif; font-weight: 500; font-size: 16px; opacity: 1; line-height: 20px; transition: color 0.2s ease 0s; visibility: visible; text-rendering: geometricprecision; -moz-text-size-adjust: none;">${msg("bankid.login.cancel")}</span>
+              <input type="hidden" id="state" name="state" value="${state}">
+            </div>
+          </div>
+        </button>
 			</form>
 		</div>
 <script>
@@ -79,7 +80,7 @@
 	    function() {
 	    
 	    	const req = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-	    	const url='collect';
+	    	const url='collect?state=${state}';
 	    	req.open("GET", url, false);
 	    	req.send();
 	    	
@@ -102,17 +103,17 @@
 				}	
     		}
     		else if( req.status!==200 ) {
-    			redirectToError(JSON.parse(req.responseText).hintCode);	
+    			redirectToError(JSON.parse(req.responseText).hintCode, '${state}');
     		}
 	        return false;
 	    },
 	    function() {
 	        // Done, success callback
-        	redirectToDone();
+        	redirectToDone('${state}');
 	    },
 	    function() {
 	        // Error, failure callback
-	        redirectToError('expiredTransaction')
+	        redirectToError('expiredTransaction', '${state}')
 	    },
 	    120000, // timeout
 	    2000 // interval
